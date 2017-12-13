@@ -1,10 +1,7 @@
-package com.example.preawbnp.bookstore.ListBook;;
+package com.example.preawbnp.bookstore.ListBook;
 
 import com.example.preawbnp.bookstore.model.Book;
 import com.example.preawbnp.bookstore.model.BookRepository;
-
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -13,11 +10,34 @@ import java.util.Collections;
 import java.util.Observable;
 import java.util.Observer;
 
-public class listBooks extends AppCompatActivity {
+class BookListPresenter implements Observer{
+    private BookListView view;
+    private BookRepository repository;
 
+    ArrayList<Book> books;
+
+    public BookListPresenter(BookRepository repository,BookListView view){
+        this.repository = repository;
+        this.view = view;
+    }
+
+    public void initialize() {
+        repository.addObserver(this);
+        repository.fetchAllBooks();
+    }
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_books);
+    public void update(Observable o, Object arg) {
+        if(o == repository) {
+            books = new ArrayList<>(repository.getAllBooks());
+            view.setBookList(books);
+        }
+    }
+
+    public BookRepository sortByTitle() {
+        return repository;
+    }
+
+    public BookRepository sortByYear() {
+        return repository;
     }
 }
